@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:latest # Use the latest stable PostgreSQL image
+    environment:
+      POSTGRES_USER: myuser # Replace with your desired PostgreSQL username
+      POSTGRES_PASSWORD: mypassword # Replace with your desired PostgreSQL password
+      POSTGRES_DB: mydatabase # Replace with your desired database name
+    ports:
+      - "5432:5432" # Map host port 5432 to container port 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistent storage for database data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest # Use the latest pgAdmin 4 image
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com # Replace with your desired pgAdmin login email
+      PGADMIN_DEFAULT_PASSWORD: mysecretpassword # Replace with your desired pgAdmin login password
+      PGADMIN_LISTEN_PORT: 80 # pgAdmin listens on port 80 inside the container
+    ports:
+      - "5050:80" # Map host port 5050 to container port 80
+    depends_on:
+      - postgres # Ensure postgres starts before pgadmin
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin # Persistent storage for pgAdmin data
+
+volumes:
+  postgres_data:
+  pgadmin_data:
