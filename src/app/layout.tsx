@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { getAuthenticatedUser } from "@/auth";
 import Link from "next/link";
+import { LogoutButton } from "./components/LogoutButton";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,8 +23,8 @@ const RootLayout = async ({
           <nav className="flex gap-x-8 justify-end">
             {user ? (
               <>
-                <p>{user}</p>
-                <button>Logout</button>
+                <p>{user.username}</p>
+                <LogoutButton />
               </>
             ) : (
               <>

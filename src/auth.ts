@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 import { Session } from "./generated/prisma";
 import { prisma } from "./client";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { error } from "console";
 
 export const createUserAndSession = async (
   username: string,
@@ -28,6 +29,8 @@ export const createUserAndSession = async (
       sessionToken: sessionToken,
       sessionExpiresAt: session.expiresAt,
     };
+
+    // TODO: Figure out how to send a nice error message to the client
   } catch (error) {
     if ((error as any).code === "P2002") {
       throw new Error("Username already exists");
@@ -48,6 +51,18 @@ export const setSessionTokenCookie = (
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     expires: expiresAt,
+  });
+};
+
+export const deleteSessionTokenCookie = (
+  cookieStore: ReadonlyRequestCookies
+): void => {
+  cookieStore.set("session", "", {
+    httpOnly: true,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
   });
 };
 
@@ -138,7 +153,9 @@ export const invalidateSession = async (sessionId: string): Promise<void> => {
   await prisma.session.delete({ where: { id: sessionId } });
 };
 
-export const getAuthenticatedUser = async (): Promise<string | undefined> => {
+export const getAuthenticatedUser = async (): Promise<
+  { username: string; userId: number; sessionId: string } | undefined
+> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value;
 
@@ -152,7 +169,11 @@ export const getAuthenticatedUser = async (): Promise<string | undefined> => {
     where: {
       id: sessionId,
     },
-    select: { expiresAt: true, user: { select: { id: true, username: true } } },
+    select: {
+      expiresAt: true,
+      id: true,
+      user: { select: { id: true, username: true } },
+    },
   });
 
   if (!session) {
@@ -177,5 +198,9 @@ export const getAuthenticatedUser = async (): Promise<string | undefined> => {
     });
   }
 
-  return session.user.username;
+  return {
+    username: session.user.username,
+    userId: session.user.id,
+    sessionId: session.id,
+  };
 };
