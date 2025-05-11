@@ -17,7 +17,7 @@ datasource db {
 // Run migrations again
 model User {
   id           Int       @id @default(autoincrement())
-  username     String @unique
+  username     String    @unique
   passwordHash String
   sessions     Session[]
 }

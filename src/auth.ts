@@ -1,5 +1,4 @@
 import { hash, verify } from "@node-rs/argon2";
-import { sha1 } from "@oslojs/crypto/sha1";
 import {
   encodeBase32LowerCaseNoPadding,
   encodeHexLowerCase,
@@ -9,7 +8,18 @@ import { cookies } from "next/headers";
 import { Session } from "./generated/prisma";
 import { prisma } from "./client";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { error } from "console";
+import { Prisma } from "./generated/prisma";
+
+export class UsernameTakenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UsernameTakenError";
+  }
+
+  get [Symbol.toStringTag]() {
+    return this.name;
+  }
+}
 
 export const createUserAndSession = async (
   username: string,
@@ -25,17 +35,20 @@ export const createUserAndSession = async (
     const session = await createSession(sessionToken, user.id);
 
     return {
-      user,
+      user: user,
       sessionToken: sessionToken,
       sessionExpiresAt: session.expiresAt,
     };
-
-    // TODO: Figure out how to send a nice error message to the client
   } catch (error) {
-    if ((error as any).code === "P2002") {
-      throw new Error("Username already exists");
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      throw new UsernameTakenError(
+        `A user with the username "${username}" already exists.`
+      );
     } else {
-      throw new Error("An error occurred while creating the user");
+      throw error;
     }
   }
 };

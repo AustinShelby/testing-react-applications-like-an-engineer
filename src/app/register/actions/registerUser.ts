@@ -5,17 +5,48 @@ import {
   registerFormSchema,
   RegisterFormSchema,
 } from "../utils/registerFormSchema";
-import { createUserAndSession, setSessionTokenCookie } from "@/auth";
+import {
+  createUserAndSession,
+  setSessionTokenCookie,
+  UsernameTakenError,
+} from "@/auth";
 import { redirect } from "next/navigation";
+import { ApiReturn } from "@/app/utils/ApiReturnType";
+import { NextResponse } from "next/server";
 
-export const registerUser = async (data: RegisterFormSchema) => {
-  const valid = registerFormSchema.parse(data);
+type RegisterError = "USERNAME_TAKEN" | "UNKNOWN_ERROR";
 
-  const a = await createUserAndSession(valid.username, valid.password);
+export const registerUser = async (
+  data: RegisterFormSchema
+): Promise<ApiReturn<any, RegisterError>> => {
+  try {
+    const valid = registerFormSchema.parse(data);
 
-  const cookieStore = await cookies();
+    const userAndSession = await createUserAndSession(
+      valid.username,
+      valid.password
+    );
 
-  await setSessionTokenCookie(cookieStore, a.sessionToken, a.sessionExpiresAt);
+    const cookieStore = await cookies();
+
+    await setSessionTokenCookie(
+      cookieStore,
+      userAndSession.sessionToken,
+      userAndSession.sessionExpiresAt
+    );
+  } catch (error) {
+    if (error instanceof UsernameTakenError) {
+      return {
+        error: true,
+        message: "USERNAME_TAKEN",
+      };
+    } else {
+      return {
+        error: true,
+        message: "UNKNOWN_ERROR",
+      };
+    }
+  }
 
   redirect("/");
 };
