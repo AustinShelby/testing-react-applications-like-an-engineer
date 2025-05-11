@@ -2,21 +2,22 @@
 
 import { cookies } from "next/headers";
 import {
-  registerFormSchema,
-  RegisterFormSchema,
-} from "../utils/registerFormSchema";
-import {
-  createUserAndSession,
+  authenticateUser,
   getAuthenticatedUser,
+  IncorrectPasswordError,
   setSessionTokenCookie,
-  UsernameTakenError,
+  UserNotFoundError,
 } from "@/auth";
 import { redirect } from "next/navigation";
 import { ApiReturn } from "@/app/utils/ApiReturnType";
+import {
+  registerFormSchema,
+  RegisterFormSchema,
+} from "@/app/register/utils/registerFormSchema";
 
-type RegisterError = "USERNAME_TAKEN" | "UNKNOWN_ERROR";
+type RegisterError = "USER_NOT_FOUND" | "INVALID_PASSWORD" | "UNKNOWN_ERROR";
 
-export const registerUser = async (
+export const loginUser = async (
   data: RegisterFormSchema
 ): Promise<ApiReturn<any, RegisterError>> => {
   const user = await getAuthenticatedUser();
@@ -28,7 +29,7 @@ export const registerUser = async (
   try {
     const valid = registerFormSchema.parse(data);
 
-    const userAndSession = await createUserAndSession(
+    const userAndSession = await authenticateUser(
       valid.username,
       valid.password
     );
@@ -41,10 +42,15 @@ export const registerUser = async (
       userAndSession.sessionExpiresAt
     );
   } catch (error) {
-    if (error instanceof UsernameTakenError) {
+    if (error instanceof UserNotFoundError) {
       return {
         error: true,
-        message: "USERNAME_TAKEN",
+        message: "USER_NOT_FOUND",
+      };
+    } else if (error instanceof IncorrectPasswordError) {
+      return {
+        error: true,
+        message: "INVALID_PASSWORD",
       };
     } else {
       return {

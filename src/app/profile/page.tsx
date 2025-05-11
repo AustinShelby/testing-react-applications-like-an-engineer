@@ -1,5 +1,4 @@
 import { getAuthenticatedUser } from "@/auth";
-import { RegisterForm } from "./components/RegisterForm";
 import { redirect } from "next/navigation";
 
 export const metadata = {
@@ -11,7 +10,7 @@ const RegisterPage = async () => {
   const user = await getAuthenticatedUser();
 
   if (user) {
-    redirect("/");
+    redirect("/login");
   }
 
   return (

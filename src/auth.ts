@@ -53,6 +53,55 @@ export const createUserAndSession = async (
   }
 };
 
+export class UserNotFoundError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "UserNotFoundError";
+  }
+
+  get [Symbol.toStringTag]() {
+    return this.name;
+  }
+}
+
+export class IncorrectPasswordError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "IncorrectPasswordError";
+  }
+
+  get [Symbol.toStringTag]() {
+    return this.name;
+  }
+}
+
+export const authenticateUser = async (username: string, password: string) => {
+  const user = await prisma.user.findUnique({
+    where: { username },
+  });
+
+  if (!user) {
+    throw new UserNotFoundError(
+      `A user with the username "${username}" does not exist.`
+    );
+  }
+
+  const verified = await verifyPasswordHash(user.passwordHash, password);
+
+  if (!verified) {
+    throw new IncorrectPasswordError("Incorrect password.");
+  }
+
+  const sessionToken = generateSessionToken();
+  const session = await createSession(sessionToken, user.id);
+
+  return {
+    user: user,
+    sessionToken: sessionToken,
+    sessionExpiresAt: session.expiresAt,
+  };
+};
+
 export const setSessionTokenCookie = (
   cookieStore: ReadonlyRequestCookies,
   token: string,

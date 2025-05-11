@@ -1,13 +1,13 @@
 import { getAuthenticatedUser } from "@/auth";
-import { RegisterForm } from "./components/RegisterForm";
+import { LoginForm } from "./components/LoginForm";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Register",
-  description: "Register page",
+  title: "Login",
+  description: "Login page",
 };
 
-const RegisterPage = async () => {
+const LoginPage = async () => {
   const user = await getAuthenticatedUser();
 
   if (user) {
@@ -17,10 +17,10 @@ const RegisterPage = async () => {
   return (
     <div className="flex items-center justify-center mt-32">
       <div className="w-full max-w-md">
-        <RegisterForm />
+        <LoginForm />
       </div>
     </div>
   );
 };
 
-export default RegisterPage;
+export default LoginPage;

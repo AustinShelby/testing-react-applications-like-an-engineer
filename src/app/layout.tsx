@@ -18,23 +18,40 @@ const RootLayout = async ({
 
   return (
     <html lang="en">
-      <body className={`antialiased`}>
-        <header className="max-w-5xl mx-auto px-4 py-2">
-          <nav className="flex gap-x-8 justify-end">
-            {user ? (
-              <>
-                <p>{user.username}</p>
-                <LogoutButton />
-              </>
-            ) : (
-              <>
-                <Link href={"/login"}>Login</Link>
-                <Link href={"/register"}>Register</Link>
-              </>
-            )}
+      <body className="antialiased bg-gray-50 text-gray-900">
+        <header className="max-w-5xl mx-auto px-4 py-4 border-b border-gray-200">
+          <nav className="flex items-center justify-between">
+            <Link className="text-xl font-semibold" href={"/"}>
+              My App
+            </Link>
+            <div className="flex items-center gap-x-6">
+              {user ? (
+                <>
+                  <p className="text-sm font-medium">
+                    Welcome, {user.username}
+                  </p>
+                  <LogoutButton />
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={"/login"}
+                    className="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href={"/register"}
+                    className="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
+            </div>
           </nav>
         </header>
-        {children}
+        <main className="max-w-5xl mx-auto px-4 py-6">{children}</main>
       </body>
     </html>
   );

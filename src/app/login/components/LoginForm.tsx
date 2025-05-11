@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   RegisterFormSchema,
   registerFormSchema,
-} from "../utils/registerFormSchema";
-import { registerUser } from "../actions/registerUser";
+} from "@/app/register/utils/registerFormSchema";
+import { loginUser } from "../actions/loginUser";
 
-export const RegisterForm = () => {
+export const LoginForm = () => {
   const {
     register,
     handleSubmit,
@@ -23,13 +23,18 @@ export const RegisterForm = () => {
   });
 
   const submit: SubmitHandler<RegisterFormSchema> = async (data) => {
-    const response = await registerUser(data);
+    const response = await loginUser(data);
 
     if (response.error) {
-      if (response.message === "USERNAME_TAKEN") {
+      if (response.message === "USER_NOT_FOUND") {
         setError("username", {
           type: "manual",
-          message: "Username is already taken",
+          message: "User not found. Please check your username.",
+        });
+      } else if (response.message === "INVALID_PASSWORD") {
+        setError("password", {
+          type: "manual",
+          message: "Invalid password. Please try again.",
         });
       } else if (response.message === "UNKNOWN_ERROR") {
         setError("username", {
@@ -43,7 +48,7 @@ export const RegisterForm = () => {
   return (
     <div className="flex flex-col gap-4 p-6 bg-white shadow-md rounded-md">
       <form onSubmit={handleSubmit(submit)}>
-        <h1 className="text-2xl font-bold mb-4 text-center">Register</h1>
+        <h1 className="text-2xl font-bold mb-4 text-center">Login</h1>
 
         <div className="flex flex-col">
           <label
@@ -90,16 +95,16 @@ export const RegisterForm = () => {
           type="submit"
           className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          {isSubmitting ? "Registering..." : "Register"}
+          {isSubmitting ? "Logging in..." : "Login"}
         </button>
       </form>
       <p className="mt-4 text-sm text-center text-gray-600">
-        Already have an account?{" "}
+        Don't have an account?{" "}
         <a
-          href="/login"
-          className="text-blue-500 hover:underline"
+          href="/register"
+          className="text-blue-600 hover:underline"
         >
-          Login here
+          Register here
         </a>
     </div>
   );
