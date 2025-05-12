@@ -11,7 +11,7 @@ const RegisterPage = async () => {
   const user = await getAuthenticatedUser();
 
   if (user) {
-    redirect("/");
+    redirect("/profile");
   }
 
   return (

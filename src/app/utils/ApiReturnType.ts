@@ -1,4 +1,4 @@
-export type ApiReturn<TSuccess, TError = string> =
+export type ApiReturn<TSuccess = any, TError = string> =
   | {
       error: false;
       data: TSuccess;
@@ -6,4 +6,5 @@ export type ApiReturn<TSuccess, TError = string> =
   | {
       error: true;
       message: TError;
-    };
+    }
+  | void;

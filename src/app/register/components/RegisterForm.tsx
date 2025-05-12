@@ -25,7 +25,7 @@ export const RegisterForm = () => {
   const submit: SubmitHandler<RegisterFormSchema> = async (data) => {
     const response = await registerUser(data);
 
-    if (response.error) {
+    if (response?.error) {
       if (response.message === "USERNAME_TAKEN") {
         setError("username", {
           type: "manual",
@@ -65,7 +65,7 @@ export const RegisterForm = () => {
             </p>
           )}
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col mt-4">
           <label
             htmlFor="password"
             className="mb-2 text-sm font-medium text-gray-700"
@@ -88,19 +88,17 @@ export const RegisterForm = () => {
         <button
           disabled={isSubmitting}
           type="submit"
-          className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mt-8"
         >
           {isSubmitting ? "Registering..." : "Register"}
         </button>
       </form>
       <p className="mt-4 text-sm text-center text-gray-600">
         Already have an account?{" "}
-        <a
-          href="/login"
-          className="text-blue-500 hover:underline"
-        >
+        <a href="/login" className="text-blue-500 hover:underline">
           Login here
         </a>
+      </p>
     </div>
   );
 };

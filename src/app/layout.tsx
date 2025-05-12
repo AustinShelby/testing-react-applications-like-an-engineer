@@ -20,7 +20,7 @@ const RootLayout = async ({
     <html lang="en">
       <body className="antialiased bg-gray-50 text-gray-900">
         <header className="max-w-5xl mx-auto px-4 py-4 border-b border-gray-200">
-          <nav className="flex items-center justify-between">
+          <nav className="flex items-baseline justify-between">
             <Link className="text-xl font-semibold" href={"/"}>
               My App
             </Link>
@@ -28,7 +28,13 @@ const RootLayout = async ({
               {user ? (
                 <>
                   <p className="text-sm font-medium">
-                    Welcome, {user.username}
+                    Welcome,{" "}
+                    <Link
+                      className="font-medium text-blue-600 hover:underline"
+                      href={"/profile"}
+                    >
+                      {user.username}
+                    </Link>
                   </p>
                   <LogoutButton />
                 </>

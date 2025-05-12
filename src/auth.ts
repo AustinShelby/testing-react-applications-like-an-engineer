@@ -6,9 +6,9 @@ import {
 import { sha256 } from "@oslojs/crypto/sha2";
 import { cookies } from "next/headers";
 import { Session } from "./generated/prisma";
-import { prisma } from "./client";
+import { prisma } from "@/client";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { Prisma } from "./generated/prisma";
+import { Prisma } from "@/generated/prisma";
 
 export class UsernameTakenError extends Error {
   constructor(message: string) {

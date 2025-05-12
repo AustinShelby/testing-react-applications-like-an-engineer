@@ -20,6 +20,7 @@ model User {
   username     String    @unique
   passwordHash String
   sessions     Session[]
+  notes        Note[]
 }
 
 model Session {
@@ -28,4 +29,14 @@ model Session {
   expiresAt DateTime
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  private   Boolean  @default(false)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
