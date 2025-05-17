@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 import { resetDatabase } from "./utils/resetDatabase";
 import { createUserAndSignIn } from "./utils/createUserAndSignIn";
 
+// TODO: Order tests in such a fashion that when resetting database AFTER instead of BEFORE and there's an error in a test, the database is not reset and the next test fails because of it.
 test.describe("Register", () => {
   test.beforeEach(async ({ page }) => {
     await resetDatabase();

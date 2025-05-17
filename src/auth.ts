@@ -1,14 +1,19 @@
 import { hash, verify } from "@node-rs/argon2";
-import {
-  encodeBase32LowerCaseNoPadding,
-  encodeHexLowerCase,
-} from "@oslojs/encoding";
-import { sha256 } from "@oslojs/crypto/sha2";
 import { cookies } from "next/headers";
 import { Session } from "./generated/prisma";
 import { prisma } from "@/client";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import { Prisma } from "@/generated/prisma";
+
+// Hack to load oslo because otherwise Playwright will complain about CJS ESM nonsense
+const getOslo = async () => {
+  const { encodeBase32LowerCaseNoPadding, encodeHexLowerCase } = await import(
+    "@oslojs/encoding"
+  );
+  const { sha256 } = await import("@oslojs/crypto/sha2");
+
+  return { encodeBase32LowerCaseNoPadding, encodeHexLowerCase, sha256 };
+};
 
 export class UsernameTakenError extends Error {
   constructor(message: string) {
@@ -39,7 +44,7 @@ export const createUserAndSession = async (
     const user = await prisma.user.create({
       data: { username, passwordHash: hashedPassword },
     });
-    const sessionToken = generateSessionToken();
+    const sessionToken = await generateSessionToken();
     const session = await createSession(sessionToken, user.id);
 
     return {
@@ -100,7 +105,7 @@ export const authenticateUser = async (username: string, password: string) => {
     throw new IncorrectPasswordError("Incorrect password.");
   }
 
-  const sessionToken = generateSessionToken();
+  const sessionToken = await generateSessionToken();
   const session = await createSession(sessionToken, user.id);
 
   return {
@@ -152,10 +157,11 @@ export async function verifyPasswordHash(
   return await verify(hash, password);
 }
 
-export const generateSessionToken = (): string => {
+export const generateSessionToken = async (): Promise<string> => {
   const tokenBytes = new Uint8Array(20);
 
   crypto.getRandomValues(tokenBytes);
+  const { encodeBase32LowerCaseNoPadding } = await getOslo();
 
   const token = encodeBase32LowerCaseNoPadding(tokenBytes).toLowerCase();
 
@@ -166,6 +172,7 @@ export const createSession = async (
   token: string,
   userId: number
 ): Promise<Session> => {
+  const { encodeHexLowerCase, sha256 } = await getOslo();
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
   const session = await prisma.session.create({
@@ -180,6 +187,7 @@ export const createSession = async (
 };
 
 export const validateSessionToken = async (token: string): Promise<any> => {
+  const { encodeHexLowerCase, sha256 } = await getOslo();
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
   const result = await prisma.session.findUnique({
@@ -233,6 +241,7 @@ export const getAuthenticatedUser = async (): Promise<
     return undefined;
   }
 
+  const { encodeHexLowerCase, sha256 } = await getOslo();
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 
   const session = await prisma.session.findUnique({
