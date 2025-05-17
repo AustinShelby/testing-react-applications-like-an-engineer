@@ -24,7 +24,15 @@ export class UsernameTakenError extends Error {
 export const createUserAndSession = async (
   username: string,
   password: string
-) => {
+): Promise<{
+  user: {
+    id: number;
+    username: string;
+    passwordHash: string;
+  };
+  sessionToken: string;
+  sessionExpiresAt: Date;
+}> => {
   const hashedPassword = await hashPassword(password);
 
   try {
