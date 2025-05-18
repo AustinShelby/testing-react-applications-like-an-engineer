@@ -1,7 +1,6 @@
 import { Note } from "@/app/components/Note";
 import { getAuthenticatedUser } from "@/auth";
 import { prisma } from "@/client";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 
@@ -17,7 +16,7 @@ const parseNumberString = (userId: string): number | undefined => {
   }
 };
 
-export const UserPage = async ({
+const NotePage = async ({
   params,
 }: {
   params: Promise<{ userId: string; noteId: string }>;
@@ -31,16 +30,33 @@ export const UserPage = async ({
     notFound();
   }
 
+  const currentUser = await getAuthenticatedUser();
+
   const note = await prisma.note.findUnique({
     where: {
       id: parsedNoteId,
       userId: parsedUserId,
       // TODO: Make a bug report that says that a note is not found on this address. Demonstrate that the spec is wrong (unambigious) as it doesn't specify that the note needs to be public for it to be found on this address.
-      private: false,
+
+      // private: false,
+      OR: [
+        {
+          private: false,
+        },
+        ...(currentUser
+          ? [
+              {
+                userId: currentUser.userId,
+              },
+            ]
+          : []),
+      ],
     },
     select: {
       id: true,
       content: true,
+      private: true,
+      createdAt: true,
       user: {
         select: {
           id: true,
@@ -54,17 +70,16 @@ export const UserPage = async ({
     notFound();
   }
 
-  const currentUser = await getAuthenticatedUser();
-
   return (
-    <div className="mt-16">
+    <div className="p-6">
       <Note
         noteId={note.id}
         content={note.content}
         userId={note.user.id}
         username={note.user.username}
-        isPrivate={false}
+        isPrivate={note.private}
         isCurrentUsers={currentUser?.userId === note.user.id}
+        createdAt={note.createdAt}
       />
     </div>
   );
@@ -75,4 +90,4 @@ export const metadata = {
   description: "User page",
 };
 
-export default UserPage;
+export default NotePage;

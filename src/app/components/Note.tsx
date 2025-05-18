@@ -11,29 +11,47 @@ export const Note: FC<{
   isPrivate: boolean;
   isCurrentUsers: boolean;
   username: string;
-}> = ({ noteId, content, userId, isPrivate, isCurrentUsers, username }) => {
+  createdAt: Date;
+}> = ({
+  noteId,
+  content,
+  userId,
+  isPrivate,
+  isCurrentUsers,
+  username,
+  createdAt,
+}) => {
   return (
-    <div className="flex justify-between items-start">
+    <div className="flex justify-between items-start gap-6">
       <div>
         <p>
-          <strong>
-            <Link className="hover:text-blue-500" href={`/${userId}`}>
-              {username}
-            </Link>
-          </strong>
+          <Link
+            data-testid="note-user"
+            className="hover:text-blue-500 font-semibold"
+            href={`/${userId}`}
+          >
+            {username}
+          </Link>
+          <span className="text-sm text-gray-600 ml-2">
+            {createdAt.toLocaleDateString("se")}
+            {isPrivate && <span className="italic"> - Private</span>}
+          </span>
         </p>
-        <p className="text-xl">
-          <Link href={`/${userId}/${noteId}`} className="hover:text-blue-500">
+        <p className="text-xl mt-2">
+          <Link
+            data-testid="note-content"
+            href={`/${userId}/${noteId}`}
+            className="hover:text-blue-500"
+          >
             {content}
-            {isPrivate && (
-              <span className="italic text-gray-600"> Private</span>
-            )}
           </Link>
         </p>
       </div>
-      {isCurrentUsers && (
-        <NotePrivacyToggleButton noteId={noteId} isPrivate={isPrivate} />
-      )}
+      <div className="flex-shrink-0">
+        {isCurrentUsers && (
+          <NotePrivacyToggleButton noteId={noteId} isPrivate={isPrivate} />
+        )}
+      </div>
     </div>
   );
 };

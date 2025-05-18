@@ -18,7 +18,7 @@ const parseUserId = (userId: string): number | undefined => {
   }
 };
 
-export const UserPage = async ({
+const UserPage = async ({
   params,
 }: {
   params: Promise<{ userId: string }>;
@@ -56,11 +56,11 @@ export const UserPage = async ({
   const currentUser = await getAuthenticatedUser();
 
   return (
-    <div className="w-full mt-16">
-      <h1 className="text-2xl">{user.username}</h1>
-      <ul className="mt-8 divide-y divide-gray-200">
+    <div className="w-full">
+      <h1 className="text-2xl p-6 border-b border-gray-200">{user.username}</h1>
+      <ul className="divide-y divide-gray-200">
         {user.notes.map((note) => (
-          <li key={note.id} className="py-3 text-lg">
+          <li key={note.id} className="p-6">
             <Note
               noteId={note.id}
               content={note.content}
@@ -68,6 +68,7 @@ export const UserPage = async ({
               isPrivate={note.private}
               isCurrentUsers={note.userId === currentUser?.userId}
               username={user.username}
+              createdAt={note.createdAt}
             />
           </li>
         ))}

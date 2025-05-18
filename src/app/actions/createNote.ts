@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 
 export const createNote = async (
   data: CreateNoteFormSchema
-): Promise<ApiReturn> => {
+): ApiReturn<string> => {
   const user = await getAuthenticatedUser();
 
   if (!user) {
@@ -33,8 +33,15 @@ export const createNote = async (
       },
     });
 
-    revalidatePath("/");
+    // It doesn't actually matter what we put here but we need to call revalidatePath to refresh the data on the page
+    revalidatePath("I ❤ Next.js");
+    return {
+      error: false,
+      data: "Note created successfully.",
+    };
   } catch (error) {
+    console.error(error);
+
     return {
       error: true,
       message: "Unknown error. Please try again.",

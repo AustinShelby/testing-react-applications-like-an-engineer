@@ -7,6 +7,7 @@ import {
   registerFormSchema,
 } from "../utils/registerFormSchema";
 import { registerUser } from "../actions/registerUser";
+import Link from "next/link";
 
 export const RegisterForm = () => {
   const {
@@ -95,9 +96,9 @@ export const RegisterForm = () => {
       </form>
       <p className="mt-4 text-sm text-center text-gray-600">
         Already have an account?{" "}
-        <a href="/login" className="text-blue-500 hover:underline">
+        <Link href="/login" className="text-blue-500 hover:underline">
           Login here
-        </a>
+        </Link>
       </p>
     </div>
   );

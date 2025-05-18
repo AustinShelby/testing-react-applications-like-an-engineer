@@ -1,5 +1,6 @@
 "use server";
 
+import { ApiReturn } from "@/app/utils/ApiReturnType";
 import { getAuthenticatedUser } from "@/auth";
 import { prisma } from "@/client";
 import { revalidatePath } from "next/cache";
@@ -11,22 +12,36 @@ export const toggleNotePrivacy = async ({
 }: {
   noteId: number;
   isPrivate: boolean;
-}) => {
-  const user = await getAuthenticatedUser();
+}): ApiReturn<string> => {
+  try {
+    const user = await getAuthenticatedUser();
 
-  if (!user) {
-    redirect("/login");
+    if (!user) {
+      redirect("/login");
+    }
+
+    await prisma.note.update({
+      where: {
+        id: noteId,
+        userId: user.userId,
+      },
+      data: {
+        private: isPrivate,
+      },
+    });
+
+    // It doesn't actually matter what we put here but we need to call revalidatePath to refresh the data on the page
+    revalidatePath("what an elegant framework");
+    return {
+      error: false,
+      data: "Note privacy updated successfully.",
+    };
+  } catch (error) {
+    console.error(error);
+
+    return {
+      error: true,
+      message: "Unknown error. Please try again.",
+    };
   }
-
-  const note = await prisma.note.update({
-    where: {
-      id: noteId,
-      userId: user.userId,
-    },
-    data: {
-      private: isPrivate,
-    },
-  });
-
-  revalidatePath("/profile");
 };

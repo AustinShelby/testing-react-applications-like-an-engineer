@@ -1,9 +1,8 @@
 import { hash, verify } from "@node-rs/argon2";
 import { cookies } from "next/headers";
-import { Session } from "./generated/prisma";
 import { prisma } from "@/client";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
-import { Prisma } from "@/generated/prisma";
+import { Prisma, Session } from "@prisma/client";
 
 // Hack to load oslo because otherwise Playwright will complain about CJS ESM nonsense
 const getOslo = async () => {

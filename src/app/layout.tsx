@@ -3,6 +3,11 @@ import "./globals.css";
 import { getAuthenticatedUser } from "@/auth";
 import Link from "next/link";
 import { LogoutButton } from "./components/LogoutButton";
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,47 +22,49 @@ const RootLayout = async ({
   const user = await getAuthenticatedUser();
 
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body className="antialiased bg-gray-50 text-gray-900">
-        <header className="max-w-5xl mx-auto px-4 py-4 border-b border-gray-200">
-          <nav className="flex items-baseline justify-between">
-            <Link className="text-xl font-semibold" href={"/"}>
-              My App
-            </Link>
-            <div className="flex items-center gap-x-6">
-              {user ? (
-                <>
-                  <p className="text-sm font-medium">
-                    Welcome,{" "}
+        <div className="max-w-5xl mx-auto w-full border-x border-gray-200 min-h-screen">
+          <header className="py-6 px-4 border-b border-gray-200">
+            <nav className="flex items-baseline justify-between">
+              <Link className="text-lg font-medium" href={"/"}>
+                Notes App
+              </Link>
+              <div className="flex items-baseline gap-x-6">
+                {user ? (
+                  <>
+                    <p className="">
+                      Welcome,{" "}
+                      <Link
+                        className="font-medium text-blue-600 hover:underline"
+                        href={"/profile"}
+                      >
+                        {user.username}
+                      </Link>
+                    </p>
+                    <LogoutButton />
+                  </>
+                ) : (
+                  <>
                     <Link
-                      className="font-medium text-blue-600 hover:underline"
-                      href={"/profile"}
+                      href={"/login"}
+                      className="text-sm font-medium text-blue-600 hover:underline"
                     >
-                      {user.username}
+                      Login
                     </Link>
-                  </p>
-                  <LogoutButton />
-                </>
-              ) : (
-                <>
-                  <Link
-                    href={"/login"}
-                    className="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href={"/register"}
-                    className="text-sm font-medium text-blue-600 hover:underline"
-                  >
-                    Register
-                  </Link>
-                </>
-              )}
-            </div>
-          </nav>
-        </header>
-        <main className="max-w-5xl mx-auto px-4 py-6">{children}</main>
+                    <Link
+                      href={"/register"}
+                      className="text-sm font-medium text-blue-600 hover:underline"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            </nav>
+          </header>
+          <main className="">{children}</main>
+        </div>
       </body>
     </html>
   );
