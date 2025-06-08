@@ -36,7 +36,7 @@ const RootLayout = async ({
                     <p className="">
                       Welcome,{" "}
                       <Link
-                        className="font-medium text-blue-600 hover:underline"
+                        className="font-medium text-primary-600 hover:underline"
                         href={"/profile"}
                       >
                         {user.username}
@@ -48,13 +48,13 @@ const RootLayout = async ({
                   <>
                     <Link
                       href={"/login"}
-                      className="text-sm font-medium text-blue-600 hover:underline"
+                      className="text-sm font-medium text-primary-600 hover:underline"
                     >
                       Login
                     </Link>
                     <Link
                       href={"/register"}
-                      className="text-sm font-medium text-blue-600 hover:underline"
+                      className="text-sm font-medium text-primary-600 hover:underline"
                     >
                       Register
                     </Link>

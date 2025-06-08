@@ -10,7 +10,6 @@ const HomePage = async () => {
     where: {
       private: false,
     },
-    // TODO: Demonstrate that in test when seeding data we want to purspofully insert data in a strange order to catch these kinds of errors
     orderBy: {
       createdAt: "desc",
     },

@@ -26,8 +26,7 @@ export const Note: FC<{
       <div>
         <p>
           <Link
-            data-testid="note-user"
-            className="hover:text-blue-500 font-semibold"
+            className="hover:text-primary-500 font-semibold"
             href={`/${userId}`}
           >
             {username}
@@ -39,9 +38,9 @@ export const Note: FC<{
         </p>
         <p className="text-xl mt-2">
           <Link
-            data-testid="note-content"
             href={`/${userId}/${noteId}`}
-            className="hover:text-blue-500"
+            className="hover:text-primary-500"
+            data-testid="note-content"
           >
             {content}
           </Link>

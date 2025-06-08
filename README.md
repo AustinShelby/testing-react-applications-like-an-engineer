@@ -12,6 +12,12 @@ Run database migrations
 npx prisma migrate reset
 ```
 
+Build application
+
+```
+npm run build
+```
+
 Run tests
 
 ```

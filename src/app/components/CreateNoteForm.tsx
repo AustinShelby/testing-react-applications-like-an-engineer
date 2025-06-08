@@ -36,37 +36,32 @@ export const CreateNoteForm = () => {
   };
 
   return (
-    <div className="">
-      <form onSubmit={handleSubmit(submit)}>
-        <div className="flex flex-col">
-          <label
-            htmlFor="note"
-            className="mb-2 text-sm font-medium text-gray-700"
-          >
-            Note
-          </label>
-          <input
-            type="text"
-            id="note"
-            {...register("content")}
-            required
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          />
-          {errors.content && (
-            <p className="mt-1 text-sm text-red-600">
-              {errors.content.message}
-            </p>
-          )}
-        </div>
-        <button
-          // TODO: Remove the following line to introduce a bug to demonstrate how TDD can help with debugging
-          // disabled={isSubmitting}
-          type="submit"
-          className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mt-4 font-medium"
+    <form onSubmit={handleSubmit(submit)}>
+      <div className="flex flex-col">
+        <label
+          htmlFor="note"
+          className="mb-2 text-sm font-medium text-gray-700"
         >
-          {isSubmitting ? "Creating..." : "Create Note"}
-        </button>
-      </form>
-    </div>
+          Note
+        </label>
+        <input
+          type="text"
+          id="note"
+          {...register("content")}
+          required
+          className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
+        />
+        {errors.content && (
+          <p className="mt-1 text-sm text-red-600">{errors.content.message}</p>
+        )}
+      </div>
+      <button
+        disabled={isSubmitting}
+        type="submit"
+        className="px-4 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 mt-4 font-medium"
+      >
+        {isSubmitting ? "Creating..." : "Create Note"}
+      </button>
+    </form>
   );
 };

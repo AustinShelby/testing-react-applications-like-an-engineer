@@ -58,7 +58,7 @@ export const RegisterForm = () => {
             id="username"
             {...register("username")}
             required
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           {errors.username && (
             <p className="mt-1 text-sm text-red-600">
@@ -78,7 +78,7 @@ export const RegisterForm = () => {
             id="password"
             {...register("password")}
             required
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           {errors.password && (
             <p className="mt-1 text-sm text-red-600">
@@ -89,14 +89,14 @@ export const RegisterForm = () => {
         <button
           disabled={isSubmitting}
           type="submit"
-          className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full mt-8"
+          className="px-4 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 w-full mt-8"
         >
           {isSubmitting ? "Registering..." : "Register"}
         </button>
       </form>
       <p className="mt-4 text-sm text-center text-gray-600">
         Already have an account?{" "}
-        <Link href="/login" className="text-blue-500 hover:underline">
+        <Link href="/login" className="text-primary-500 hover:underline">
           Login here
         </Link>
       </p>
